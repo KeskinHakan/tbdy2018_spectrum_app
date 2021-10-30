@@ -388,5 +388,10 @@ ax.set_ylabel("SaR (g)")
 
 st.write(fig_saR)
 
-
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 
