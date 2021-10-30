@@ -6,10 +6,7 @@ Created on Mon Sep 20 22:20:04 2021
 """
 
 # simple_streamlit_app.py
-"""
-This app will be developed to get design spectral acceleration according to TBDY 2018
 
-"""
 
 import numpy as np
 import streamlit as st
@@ -20,23 +17,57 @@ from numpy import arange
 import pandas as pd
 import pydeck as pdk
 
+
+
+st.title("Turkish Building Seismic Code (TBEC) - 2018 SaR and SaE Calculation App")
+
+
+"""
+This application was developed to find out design (SaR) and elastic spectral acceleration (SaE) of the structure
+that located in Turkey. 
+
+To use the app you should choose at the following steps below:
+    
+    1- Write the exact location of the structure.
+    2- Type of structure
+    3- Ductility of structure
+    4- Structure's supporting system against earthquake loads.
+    5- Building importance Factor
+    6- Soil Type
+    7- Fundamental period of the structure that you want to find exact
+        SaR and SaE values.
+        
+To find the more information about these parameters please check the TBEC 2018
+Chapter 2, 3 & 4. You can download the TBEC 2018 in Turkish format at the following
+link: https://www.imo.org.tr/resimler/dosya_ekler/89227ad223d3b7a_ek.pdf
+    
+After these choices this app will give the design point for fundamental period of the structure.
+
+Note: These results calculated with enterpolation of the spectral values of the coordinates that
+shared by AFAD (https://tdth.afad.gov.tr/TDTH/main.xhtml). These results cannot use for the design or any studies
+please be sure the find design parameters from the AFAD system. This app just prepared to give an information.
+
+"""
+
+st.subheader("Exact Location of the Structure")
+
 # This part uses for the get data from Excel sheet about the spectral variables.
 
 my_sheet_main = 'Sayfa1' # change it to your sheet name
 main_file_name = 'parametre_UPD.xlsx' # change it to the name of your excel file
-df_main = read_excel(main_file_name, sheet_name = my_sheet_main)
+df_main = read_excel(main_file_name, sheet_name = my_sheet_main, engine='openpyxl')
 # print(df_main.head()) # shows headers with top 5 rows
 # print(df_main.info())
 
 my_sheet = 'Sayfa1' # change it to your sheet name
 file_name = 'unique_lat_lon.xlsx' # change it to the name of your excel file
-df = read_excel(file_name, sheet_name = my_sheet)
+df = read_excel(file_name, sheet_name = my_sheet, engine='openpyxl')
 # print(df.head()) # shows headers with top 5 rows
 # print(df.info())
 
 r_d = 'Sayfa1' # change it to your sheet name
 file_name = 'r_d.xlsx' # change it to the name of your excel file
-df_r_d = read_excel(file_name, sheet_name = r_d)
+df_r_d = read_excel(file_name, sheet_name = r_d, engine='openpyxl')
 # print(df.head()) # shows headers with top 5 rows
 # print(df.info())
 
@@ -45,12 +76,10 @@ latitude = df["Enlem"].to_frame()
 
 # Let's start the streamlit commands for inputs
 
-    
-st.title("Location of Structure on the Map")
 
-st.sidebar.header("Please write the location of structure")
-x = st.sidebar.number_input("Longitude (Range: 26.00 - 45.00)",value=28.5, step=0.1)
-y = st.sidebar.number_input("Latitude: (Range: 36.00 - 42.00)",value=40.1, step=0.1)
+st.sidebar.header("Structure Location")
+x = st.sidebar.number_input("Longitude (Range: 26.00 - 45.00)",value=29.01, step=0.1)
+y = st.sidebar.number_input("Latitude: (Range: 36.00 - 42.00)",value=41.10, step=0.1)
 
 raw_data = {'lat': [y],
 'lon': [x]}
@@ -80,19 +109,41 @@ st.pydeck_chart(pdk.Deck(
             data=df,
             get_position='[lon, lat]',
             get_color='[200, 30, 0, 160]',
-            get_radius=2000,
+            get_radius=1000,
             ),
         ],
     ))
 
-st.write(df)
+"""
+
+Please be sure the coordinates of the structure by the help of map. 
+This map will show your location that you selected from left side of the screen.
 
 """
-Please make sure you selected correct location of structure.
-If it is okay, you can continue to next step.
 
-"""
+st.markdown("Longitude: " + str(x) + " & Latitude: " + str(y))
+
 st.subheader("Type of Structure")
+
+"""
+Please choose structure' type, ductility and supporting system from the list.
+
+Tables that shared below will be updated according to your choices.
+
+"""
+
+"""
+According to TBEC 2018, to draw SaR/SaE - Period(T) graphs, you should use
+same parameters about the structural system. 
+
+These parameters can be seen below:
+    
+    1- BTS (Building Supporting System)
+    2- R (Response Modification Factor)
+    3- D (System Overstrength Factor)
+
+"""
+
 
 structure_type = st.selectbox("Type of Structure: ", {"Steel", "Concrete"})
 ductility = st.selectbox("Ductility of Structure: ", {"High", "Moderate", "Low"})
@@ -129,9 +180,9 @@ R = str_cat_final['R'].iloc[0]
 D = str_cat_final['D'].iloc[0]
 ToSS = str_cat_final['BTS'].iloc[0]
 
-st.markdown("Type of Structural System: " + str(ToSS))
-st.markdown("R: " + str(R))
-st.markdown("D: " + str(D))
+# st.markdown("Type of Structural System: " + str(ToSS))
+# st.markdown("R: " + str(R))
+# st.markdown("D: " + str(D))
 
 I_var = [1.0,1.2,1.5]
 
@@ -261,13 +312,24 @@ df["Sar"] = df["Sae"]/df["R"]
 
 t_final = df.loc[df['Period']==T]
 Sar = t_final['Sar'].iloc[0]
+Sae = t_final['Sae'].iloc[0]
 exact_point = {'Period': [T], 'Sar': [Sar]}
 design_point = pd.DataFrame(exact_point)
 
 
 # print("Design Spectral Acceleration is: " + str(format(Sar, ".3f")) + "g")
+
+st.sidebar.header("General Information of the Structural System")
+
+st.sidebar.markdown("Type of the Structure: " + structure_type)
+st.sidebar.markdown("Ductility: " + ductility )
+st.sidebar.markdown("Supporting System Category: " + structure_category )
+st.sidebar.markdown("Building Importance Factor: " + str(I))
+st.sidebar.markdown("Soil Type: " + soilType )
 st.sidebar.markdown("Location: Lon: " + str(x) + " & Lat: " + str(y))
-st.sidebar.markdown("Design Spectral Acc = " + str(format(Sar, ".3f")) + "g")
+st.sidebar.markdown("Period of Structure: " + str(format(T, ".2f")) + "s")
+st.sidebar.markdown("SaR: " + str(format(Sar, ".3f")) + "g")
+st.sidebar.markdown("SaE: " + str(format(Sae, ".3f")) + "g")
 
 # p = figure(
 #     title="Design Spectrum",
@@ -325,5 +387,6 @@ ax.set_ylabel("SaR (g)")
 # df.plot(ax=ax, x ='Period', y='Sar', kind = 'line', label = "Design Point")
 
 st.write(fig_saR)
+
 
 
