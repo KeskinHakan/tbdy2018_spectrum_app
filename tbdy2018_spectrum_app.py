@@ -16,7 +16,10 @@ from pandas import read_excel
 from numpy import arange
 import pandas as pd
 import pydeck as pdk
-
+from geopy.geocoders import Nominatim
+ 
+# Initialize Nominatim API
+geolocator = Nominatim(user_agent="geoapiExercises")
 
 
 st.title("Turkish Building Seismic Code (TBEC) - 2018 SaR and SaE Calculation App")
@@ -120,8 +123,16 @@ Please be sure the coordinates of the structure by the help of map.
 This map will show your location that you selected from left side of the screen.
 
 """
+# Displaying Latitude and Longitude
+print("Latitude: ", str(y))
+print("Longitude: ", str(x))
+ 
+# Get location with geocode
+location = geolocator.geocode(str(y)+","+str(x))
 
-st.markdown("Longitude: " + str(x) + " & Latitude: " + str(y))
+st.success("Adress: " + str(location))
+st.success("Longitude: " + str(x) + " & Latitude: " + str(y))
+
 
 st.subheader("Type of Structure")
 
@@ -328,9 +339,10 @@ st.sidebar.markdown("Building Importance Factor: " + str(I))
 st.sidebar.markdown("Soil Type: " + soilType )
 st.sidebar.markdown("Location: Lon: " + str(x) + " & Lat: " + str(y))
 st.sidebar.markdown("Period of Structure: " + str(format(T, ".2f")) + "s")
-st.sidebar.markdown("SaR: " + str(format(Sar, ".3f")) + "g")
-st.sidebar.markdown("SaE: " + str(format(Sae, ".3f")) + "g")
-
+# st.sidebar.markdown("SaR: " + str(format(Sar, ".3f")) + "g")
+# st.sidebar.markdown("SaE: " + str(format(Sae, ".3f")) + "g")
+st.sidebar.success("SaE: " + str(format(Sae, ".3f")) + "g")
+st.sidebar.success("SaR: " + str(format(Sar, ".3f")) + "g")
 # p = figure(
 #     title="Design Spectrum",
 #     x_axis_label="Period",
@@ -351,42 +363,56 @@ st.sidebar.markdown("SaE: " + str(format(Sae, ".3f")) + "g")
 
 import matplotlib.pyplot as plt
 
-"""
-Elastic Spectral Acceleration - Period Graph
 
-"""
-fig_saE = plt.figure()
-ax = fig_saE.add_subplot(1,1,1)
+# fig_saE = plt.figure()
+# ax = fig_saE.add_subplot(1,1,1)
 
-ax.scatter(df["Period"], df["Sae"],color='r',linewidth=1)
-# ax = design_point.plot(x ='Period', y='Sar', kind = 'scatter',c = "red", label = "Design Spectrum")
+# ax.scatter(df["Period"], df["Sae"],color='r',linewidth=1)
+# # ax = design_point.plot(x ='Period', y='Sar', kind = 'scatter',c = "red", label = "Design Spectrum")
 
-ax.set_xlabel("Period (T)")
-ax.set_ylabel("SaE (g)")
+# ax.set_xlabel("Period (T)")
+# ax.set_ylabel("SaE (g)")
 
 
 # df.plot(ax=ax, x ='Period', y='Sar', kind = 'line', label = "Design Point")
 
-st.write(fig_saE)
+# st.write(fig_saE)
+
+
+
+# fig_saR = plt.figure()
+# ax = fig_saR.add_subplot(1,1,1)
+
+# ax.scatter(df["Period"], df["Sar"],color='r',linewidth=1)
+# # ax = design_point.plot(x ='Period', y='Sar', kind = 'scatter',c = "red", label = "Design Spectrum")
+
+# ax.set_xlabel("Period (T)")
+# ax.set_ylabel("SaR (g)")
+
+#Line Chart
+as_list = df["Period"].tolist()
+
+df.index = as_list
+
+df_Sar = df['Sar']
+df_Sae = df['Sae']
+
+"""
+Elastic Spectral Acceleration - Period Graph
+
+"""
+st.line_chart(df_Sae)
 
 """
 Design Spectral Acceleration - Period Graph
 
 """
 
-fig_saR = plt.figure()
-ax = fig_saR.add_subplot(1,1,1)
-
-ax.scatter(df["Period"], df["Sar"],color='r',linewidth=1)
-# ax = design_point.plot(x ='Period', y='Sar', kind = 'scatter',c = "red", label = "Design Spectrum")
-
-ax.set_xlabel("Period (T)")
-ax.set_ylabel("SaR (g)")
-
+st.line_chart(df_Sar)
 
 # df.plot(ax=ax, x ='Period', y='Sar', kind = 'line', label = "Design Point")
 
-st.write(fig_saR)
+# st.write(fig_saR)
 
 hide_menu_style = """
         <style>
