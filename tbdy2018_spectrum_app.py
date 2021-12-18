@@ -487,7 +487,7 @@ elif structure_type == "Concrete":
 lambda_disp = Sae_DD3/Sae
 delta_design = R*delta_i/I
 delta_max = delta_design
-ratio = lambda_disp*(delta_max/height)
+ratio_ = lambda_disp*(delta_max/height)
 
 wall_contact = st.selectbox("Wall Contact: ", {"Rigid","Flexible"})
 
@@ -503,12 +503,12 @@ elif wall_contact == "Flexible":
     elif number_of_story != 1 and structure_type == "Concrete":
         limit_ratio = 0.016*kappa
 
-if limit_ratio < ratio:
-    st.info("Displacement Ratio: " + str(format(ratio, ".3f")))
+if limit_ratio < ratio_ :
+    st.info("Displacement Ratio: " + str(format(ratio_ , ".3f")))
     st.info("Displacement Limit Ratio: " + str(limit_ratio))
     st.success("Displacement Check: NOT OK!")
-elif limit_ratio > ratio:
-    st.info("Displacement Ratio: " + str(format(ratio, ".3f")))
+elif limit_ratio > ratio_ :
+    st.info("Displacement Ratio: " + str(format(ratio_ , ".3f")))
     st.info("Displacement Limit Ratio: " + str(limit_ratio))
     st.success("Displacement Check: OK!")
 
