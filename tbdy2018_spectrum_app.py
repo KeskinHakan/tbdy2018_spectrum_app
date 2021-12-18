@@ -22,7 +22,7 @@ from geopy.geocoders import Nominatim
 geolocator = Nominatim(user_agent="geoapiExercises")
 
 
-st.title("Turkish Building Seismic Code (TBEC) - 2018 SaR and SaE Calculation App")
+st.title("Turkish Building Seismic Code (TBEC) - Calculation App")
 
 
 """
@@ -206,6 +206,7 @@ I = st.selectbox("Building Importance Factor - I : ", {1, 1.2, 1.5})
 
 soilType = st.selectbox("Soil Type: ", {"ZA","ZB","ZC","ZD","ZE","ZF"})
 T = st.number_input("Period of Structure - T: ",value=0.20, step=0.1)
+total_weight = st.number_input("Total Weight (kN): ",value=100, step=1)
 
 # print(latitude.iloc[(latitude['Enlem']-y).abs().argsort()[:2]])
 # print(longitude.iloc[(longitude['Boylam']-x).abs().argsort()[:2]])
@@ -241,6 +242,7 @@ var2_final = df_main.loc[df_main['Merged']==var2_look]
 var3_final = df_main.loc[df_main['Merged']==var3_look]
 var4_final = df_main.loc[df_main['Merged']==var4_look]
 
+# for DD2
 var1_s1= var1_final['S12'].iloc[0]
 var2_s1= var2_final['S12'].iloc[0]
 var3_s1= var3_final['S12'].iloc[0]
@@ -257,40 +259,89 @@ var3_var4_ss =var3_ss+x_f*(var4_ss-var3_ss)
 
 s1 = var1_var2_s1 + y_f*(var3_var4_s1 - var1_var2_s1)
 ss = var1_var2_ss + y_f*(var3_var4_ss - var1_var2_ss)
+
+# for DD3
+var1_s1_DD3= var1_final['S13'].iloc[0]
+var2_s1_DD3= var2_final['S13'].iloc[0]
+var3_s1_DD3= var3_final['S13'].iloc[0]
+var4_s1_DD3= var4_final['S13'].iloc[0]
+var1_ss_DD3= var1_final['SS3'].iloc[0]
+var2_ss_DD3= var2_final['SS3'].iloc[0]
+var3_ss_DD3= var3_final['SS3'].iloc[0]
+var4_ss_DD3= var4_final['SS3'].iloc[0]
+
+var1_var2_s1_DD3 = var1_s1_DD3+x_f*(var2_s1_DD3-var1_s1_DD3)
+var3_var4_s1_DD3 =var3_s1_DD3+x_f*(var4_s1_DD3-var3_s1_DD3)
+var1_var2_ss_DD3 = var1_ss_DD3+x_f*(var2_ss_DD3-var1_ss_DD3)
+var3_var4_ss_DD3 =var3_ss_DD3+x_f*(var4_ss_DD3-var3_ss_DD3)
+
+s1_DD3 = var1_var2_s1_DD3 + y_f*(var3_var4_s1_DD3 - var1_var2_s1_DD3)
+ss_DD3 = var1_var2_ss_DD3 + y_f*(var3_var4_ss_DD3 - var1_var2_ss_DD3)
                             
 # find center and radius
 sDs, sD1, Fs, F1 = soilType_func(soilType, ss, s1)
+sDs_DD2 = sDs
+sD1_DD2 = sD1
+Fs1_DD2 = Fs
+F1_DD2 = F1
+sDs, sD1, Fs, F1 = soilType_func(soilType, ss_DD3, s1_DD3)
+sDs_DD3 = sDs
+sD1_DD3 = sD1
+Fs1_DD3 = Fs
+F1_DD3 = F1
 
 tSpectrum = []
 for i in arange(0.0, 8.0, 0.001):
     tSpectrum.append(format(i, ".3f"))
 
-tA = (0.2*sD1/sDs)
-tB = (sD1/sDs)
+tA = (0.2*sD1_DD2/sDs_DD2)
+tB = (sD1_DD2/sDs_DD2)
+tA_DD3 = (0.2*sD1_DD3/sDs_DD3)
+tB_DD3 = (sD1_DD3/sDs_DD3)
 tL = 6.0
 length_T = len(tSpectrum)
 
 sAec = []
+sAec_DD3 = []
 tRs = []
+tRs_DD3 = []
 
 i = 0
 while i < length_T:
     if float(tSpectrum[i]) >= 0.0 and float(tSpectrum[i]) < tA:
-        sAe = (0.4+0.6*float(tSpectrum[i])/tA)*sDs
+        sAe = (0.4+0.6*float(tSpectrum[i])/tA)*sDs_DD2
         tRs.append(format(sAe, ".3f"))
     elif float(tSpectrum[i]) >= tA and float(tSpectrum[i]) < tB:
-        sAe = sDs
+        sAe = sDs_DD2
         tRs.append(format(sAe, ".3f"))
     elif float(tSpectrum[i]) >= tB and float(tSpectrum[i]) < tL:
-        sAe = sD1/float(tSpectrum[i])
+        sAe = sD1_DD2/float(tSpectrum[i])
         tRs.append(format(sAe, ".3f"))
     elif float(tSpectrum[i]) >= tL:
-        sAe = sD1*tL / float(tSpectrum[i])**2
+        sAe = sD1_DD2*tL / float(tSpectrum[i])**2
         tRs.append(format(sAe, ".3f"))
 
     i += 1
+    
+i = 0
+while i < length_T:
+    if float(tSpectrum[i]) >= 0.0 and float(tSpectrum[i]) < tA_DD3:
+        sAe_DD3 = (0.4+0.6*float(tSpectrum[i])/tA_DD3)*sDs_DD3
+        tRs_DD3.append(format(sAe_DD3, ".3f"))
+    elif float(tSpectrum[i]) >= tA_DD3 and float(tSpectrum[i]) < tB_DD3:
+        sAe_DD3 = sDs_DD3
+        tRs_DD3.append(format(sAe_DD3, ".3f"))
+    elif float(tSpectrum[i]) >= tB_DD3 and float(tSpectrum[i]) < tL:
+        sAe_DD3 = sD1_DD3/float(tSpectrum[i])
+        tRs_DD3.append(format(sAe_DD3, ".3f"))
+    elif float(tSpectrum[i]) >= tL:
+        sAe_DD3 = sD1_DD3*tL / float(tSpectrum[i])**2
+        tRs_DD3.append(format(sAe_DD3, ".3f"))
 
+    i += 1
+    
 df = pd.DataFrame(list(zip(tSpectrum, tRs)), columns =['Period', 'Sae'], dtype = float)
+df_DD3 = pd.DataFrame(list(zip(tSpectrum, tRs_DD3)), columns =['Period', 'Sae_DD3'], dtype = float)
 # df.plot(x ='Period', y='Sae', kind = 'line')
 # plt.show()
 
@@ -322,8 +373,10 @@ df["Sar"] = df["Sae"]/df["R"]
 # print(df.head())
 
 t_final = df.loc[df['Period']==T]
+t_final_DD3 = df_DD3.loc[df_DD3['Period']==T]
 Sar = t_final['Sar'].iloc[0]
 Sae = t_final['Sae'].iloc[0]
+Sae_DD3 = t_final_DD3['Sae_DD3'].iloc[0]
 exact_point = {'Period': [T], 'Sar': [Sar]}
 design_point = pd.DataFrame(exact_point)
 
@@ -339,10 +392,12 @@ st.sidebar.markdown("Building Importance Factor: " + str(I))
 st.sidebar.markdown("Soil Type: " + soilType )
 st.sidebar.markdown("Location: Lon: " + str(x) + " & Lat: " + str(y))
 st.sidebar.markdown("Period of Structure: " + str(format(T, ".2f")) + "s")
+
 # st.sidebar.markdown("SaR: " + str(format(Sar, ".3f")) + "g")
 # st.sidebar.markdown("SaE: " + str(format(Sae, ".3f")) + "g")
 st.sidebar.success("SaE: " + str(format(Sae, ".3f")) + "g")
 st.sidebar.success("SaR: " + str(format(Sar, ".3f")) + "g")
+st.sidebar.success("Base Reaction: " + str(format(Sae*total_weight,".2f") + "kN"))
 # p = figure(
 #     title="Design Spectrum",
 #     x_axis_label="Period",
@@ -413,6 +468,49 @@ st.line_chart(df_Sar)
 # df.plot(ax=ax, x ='Period', y='Sar', kind = 'line', label = "Design Point")
 
 # st.write(fig_saR)
+
+# Displacement Kontrol
+
+"""
+Displacement Limit and Control
+
+"""
+
+number_of_story = st.number_input("Number of Story - N: ",value=1, step=1)
+height = st.number_input("Total Height of the Structure - H: ",value=3, step=1)
+delta_i = st.number_input("Maximum Inelastic Displacement under the Earthquake: ",value=0.01, step=0.01)
+
+if structure_type == "Steel":
+    kappa = 0.5
+elif structure_type == "Concrete":
+    kappa = 1.0
+lambda_disp = Sae_DD3/Sae
+delta_design = R*delta_i/I
+delta_max = delta_design
+ratio = lambda_disp*(delta_max/height)
+
+wall_contact = st.selectbox("Wall Contact: ", {"Rigid","Flexible"})
+
+
+if wall_contact == "Rigid":
+    if number_of_story == 1 and structure_type == "Steel":
+        limit_ratio = 0.008*kappa*1.5
+    elif number_of_story != 1 and structure_type == "Concrete":
+        limit_ratio = 0.008*kappa
+elif wall_contact == "Flexible":
+    if number_of_story == 1 and structure_type == "Steel":
+        limit_ratio = 0.016*kappa*1.5
+    elif number_of_story != 1 and structure_type == "Concrete":
+        limit_ratio = 0.016*kappa
+
+if limit_ratio <= ratio:
+    st.info("Displacement Ratio: " + str(format(ratio, ".3f")))
+    st.info("Displacement Limit Ratio: " + str(limit_ratio))
+    st.success("Displacement Check: NOT OK!")
+elif limit_ratio > ratio:
+    st.info("Displacement Ratio: " + str(format(ratio, ".3f")))
+    st.info("Displacement Limit Ratio: " + str(limit_ratio))
+    st.success("Displacement Check: OK!")
 
 hide_menu_style = """
         <style>
