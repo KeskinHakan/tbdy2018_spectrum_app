@@ -80,7 +80,7 @@ latitude = df["Enlem"].to_frame()
 # Let's start the streamlit commands for inputs
 
 
-st.sidebar.header("Structure Location")
+st.sidebar.header("Location")
 x = st.sidebar.number_input("Longitude (Range: 26.00 - 45.00)",value=29.01, step=0.1)
 y = st.sidebar.number_input("Latitude: (Range: 36.00 - 42.00)",value=41.10, step=0.1)
 
