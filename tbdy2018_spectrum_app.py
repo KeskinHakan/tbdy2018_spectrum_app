@@ -397,7 +397,7 @@ st.sidebar.markdown("Period of Structure: " + str(format(T, ".2f")) + "s")
 # st.sidebar.markdown("SaE: " + str(format(Sae, ".3f")) + "g")
 st.sidebar.success("SaE: " + str(format(Sae, ".3f")) + "g")
 st.sidebar.success("SaR: " + str(format(Sar, ".3f")) + "g")
-st.sidebar.success("Base Reaction: " + str(format(Sae*total_weight,".2f") + "kN"))
+st.sidebar.success("Base Reaction: " + str(format(Sar*total_weight,".2f") + "kN"))
 # p = figure(
 #     title="Design Spectrum",
 #     x_axis_label="Period",
@@ -504,13 +504,13 @@ elif wall_contact == "Flexible":
         limit_ratio = 0.016*kappa
 
 if limit_ratio < ratio_ :
-    st.info("Displacement Ratio: " + str(format(ratio_ , ".3f")))
-    st.info("Displacement Limit Ratio: " + str(limit_ratio))
+    st.sidebar.info("Displacement Ratio: " + str(format(ratio_ , ".3f")))
+    st.sidebar.info("Displacement Limit Ratio: " + str(limit_ratio))
     st.success("Displacement Check: NOT OK!")
 elif limit_ratio > ratio_ :
-    st.info("Displacement Ratio: " + str(format(ratio_ , ".3f")))
-    st.info("Displacement Limit Ratio: " + str(limit_ratio))
-    st.success("Displacement Check: OK!")
+    st.sidebar.info("Displacement Ratio: " + str(format(ratio_ , ".3f")))
+    st.sidebar.info("Displacement Limit Ratio: " + str(limit_ratio))
+    st.sidebar.success("Displacement Check: OK!")
 
 hide_menu_style = """
         <style>
