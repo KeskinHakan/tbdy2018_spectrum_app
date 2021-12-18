@@ -503,7 +503,7 @@ elif wall_contact == "Flexible":
     elif number_of_story != 1 and structure_type == "Concrete":
         limit_ratio = 0.016*kappa
 
-if limit_ratio <= ratio:
+if limit_ratio < ratio:
     st.info("Displacement Ratio: " + str(format(ratio, ".3f")))
     st.info("Displacement Limit Ratio: " + str(limit_ratio))
     st.success("Displacement Check: NOT OK!")
