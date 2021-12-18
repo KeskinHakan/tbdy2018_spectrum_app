@@ -81,8 +81,8 @@ latitude = df["Enlem"].to_frame()
 
 
 st.sidebar.header("Location")
-x = st.sidebar.number_input("Longitude (Range: 26.00 - 45.00)",value=29.01, step=0.1)
-y = st.sidebar.number_input("Latitude: (Range: 36.00 - 42.00)",value=41.10, step=0.1)
+x = st.sidebar.number_input("Longitude (Range: 26.00 - 45.00)",value=29.00001, step=0.00001)
+y = st.sidebar.number_input("Latitude: (Range: 36.00 - 42.00)",value=41.10000, step=0.00001)
 
 raw_data = {'lat': [y],
 'lon': [x]}
