@@ -206,7 +206,7 @@ I = st.selectbox("Building Importance Factor - I : ", {1, 1.2, 1.5})
 
 soilType = st.selectbox("Soil Type: ", {"ZA","ZB","ZC","ZD","ZE","ZF"})
 T = st.number_input("Period of Structure - T: ",value=0.20, step=0.1)
-total_weight = st.number_input("Total Weight (kN): ",value=100, step=1)
+total_weight = st.number_input("Total Structure Weight (kN): ",value=100, step=1)
 
 # print(latitude.iloc[(latitude['Enlem']-y).abs().argsort()[:2]])
 # print(longitude.iloc[(longitude['Boylam']-x).abs().argsort()[:2]])
