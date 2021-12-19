@@ -506,7 +506,7 @@ elif wall_contact == "Flexible":
 if limit_ratio < ratio_ :
     st.sidebar.markdown("Displacement Ratio: " + str(format(ratio_ , ".3f")))
     st.sidebar.markdown("Displacement Limit Ratio: " + str(limit_ratio))
-    st.sidebar.success("Displacement Check: NOT OK!")
+    st.sidebar.warning("Displacement Check: NOT OK!")
 elif limit_ratio >= ratio_ :
     st.sidebar.markdown("Displacement Ratio: " + str(format(ratio_ , ".3f")))
     st.sidebar.markdown("Displacement Limit Ratio: " + str(limit_ratio))
