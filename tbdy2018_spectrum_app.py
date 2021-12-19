@@ -495,12 +495,12 @@ wall_contact = st.selectbox("Wall Contact: ", {"Rigid","Flexible"})
 if wall_contact == "Rigid":
     if number_of_story == 1 and structure_type == "Steel":
         limit_ratio = 0.008*kappa*1.5
-    elif number_of_story == 1 and structure_type == "Concrete":
+    elif structure_type == "Concrete" or structure_type == "Steel":
         limit_ratio = 0.008*kappa
 elif wall_contact == "Flexible":
-    if number_of_story != 1 and structure_type == "Steel":
+    if number_of_story == 1 and structure_type == "Steel":
         limit_ratio = 0.016*kappa*1.5
-    elif number_of_story != 1 and structure_type == "Concrete":
+    elif structure_type == "Concrete" or structure_type == "Steel":
         limit_ratio = 0.016*kappa
 
 if limit_ratio < ratio_ :
